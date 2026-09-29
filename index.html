@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CYBER.IO - 2D & Web Games Portal</title>
+  <style>
+    :root {
+      --bg-main: #06080c;
+      --card-bg: #0f141d;
+      --accent-blue: #00f0ff;
+      --accent-purple: #8000ff;
+      --accent-pink: #ff0055;
+      --text: #ffffff;
+      --text-dim: #8a99ad;
+      --border: #1a2333;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text); padding-bottom: 40px; min-height: 100vh; }
+    
+    header {
+      background: linear-gradient(180deg, #121824 0%, var(--bg-main) 100%);
+      border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+      padding: 25px 15px;
+      text-align: center;
+    }
+    
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: var(--accent-blue);
+      text-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+    }
+    .logo-box {
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      color: #000;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .search-container {
+      width: 100%;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 14px 20px 14px 45px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s;
+    }
+    .search-input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+    .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      fill: var(--text-dim);
+      width: 20px;
+      height: 20px;
+    }
+
+    .categories {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
+    .cat-btn {
+      background: var(--card-bg);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 10px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .cat-btn.active, .cat-btn:hover {
+      background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 0 10px rgba(128, 0, 255, 0.4);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-blue);
+      box-shadow: 0 8px 25px rgba(0, 240, 255, 0.15);
+    }
+
+    .card-thumb {
+      width: 100%;
+      height: 150px;
+      background: #141c2b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .card-thumb svg {
+      width: 60px;
+      height: 60px;
+      opacity: 0.8;
+    }
+    .badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.75);
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .card-info {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      line-height: 1.4;
+      margin-bottom: 15px;
+      flex: 1;
+    }
+    .play-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--accent-blue);
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      flex-direction: column;
+    }
+    .modal.active { display: flex; }
+    .modal-header {
+      padding: 12px 20px;
+      background: #0a0e17;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent-blue);
+    }
+    .modal-controls {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      background: #1a2333;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 0.85rem;
+      transition: 0.2s;
+    }
+    .btn:hover { background: #2a364d; }
+    .btn-close { background: var(--accent-pink); }
+    .btn-close:hover { background: #d00045; }
+
+    .modal-iframe {
+      flex: 1;
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px;
+      color: var(--text-dim);
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <span class="logo-box">C</span> CYBER.IO
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+      <input type="text" id="searchInput" class="search-input" placeholder="მოძებნე თამაში სახელით..." oninput="filterGames()">
+    </div>
+
+    <div class="categories">
+      <button class="cat-btn active" onclick="filterCat('all', this)">ყველა</button>
+      <button class="cat-btn" onclick="filterCat('io', this)">.IO თამაშები</button>
+      <button class="cat-btn" onclick="filterCat('racing', this)">რბოლები</button>
+      <button class="cat-btn" onclick="filterCat('action', this)">ექშენი</button>
+      <button class="cat-btn" onclick="filterCat('arcade', this)">არკადა</button>
+    </div>
+  </div>
+
+  <div class="grid" id="gamesGrid"></div>
+
+  <div class="modal" id="gameModal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">თამაში</div>
+      <div class="modal-controls">
+        <button class="btn" onclick="reloadGame()">🔄 ხელახლა</button>
+        <button class="btn btn-close" onclick="closeGame()">✖ დახურვა</button>
+      </div>
+    </div>
+    <iframe class="modal-iframe" id="gameFrame" src="" allowfullscreen></iframe>
+  </div>
+
+  <script>
+    const games = [
+      {
+        id: 'moto-x3m',
+        title: 'Moto X3M',
+        cat: 'racing',
+        desc: 'ექსტრემალური ბაიკის რბოლა სახიფათო დაბრკოლებებით.',
+        url: 'https://html5.gamedistribution.com/5b22b39524f24ef19a5ed639e443851b/',
+        color: '#ffaa00'
+      },
+      {
+        id: 'paper-io-2',
+        title: 'Paper.io 2',
+        cat: 'io',
+        desc: 'დაიპყარი რაც შეიძლება მეტი ტერიტორია .IO სამყაროში.',
+        url: 'https://html5.gamedistribution.com/0014a400a4244b6c86729007f3549646/',
+        color: '#00f0ff'
+      },
+      {
+        id: 'drift-boss',
+        title: 'Drift Boss',
+        cat: 'racing',
+        desc: 'დაამყარე დრიფტის რეკორდები მახვილ მოსახვევებში.',
+        url: 'https://html5.gamedistribution.com/64b55c282fb84a0d9be4b3d74945d817/',
+        color: '#ff0055'
+      },
+      {
+        id: 'sausage-flip',
+        title: 'Sausage Flip',
+        cat: 'action',
+        desc: 'მხიარული ფიზიკის თამაში. გადააფრინე სოსისი ფინიშამდე.',
+        url: 'https://html5.gamedistribution.com/83907c1fa1874ebf8832c3f8e5d0ec9e/',
+        color: '#8000ff'
+      },
+      {
+        id: 'subway-surfers',
+        title: 'Subway Surfers',
+        cat: 'arcade',
+        desc: 'გაიქეცი მატარებლის ლიანდაგებზე და დააგროვე ქულები.',
+        url: 'https://html5.gamedistribution.com/a2d6a3cbbf8d40a1bf64c9247d898ef4/',
+        color: '#00ff88'
+      },
+      {
+        id: 'smash-karts',
+        title: 'Smash Karts',
+        cat: 'io',
+        desc: '3D ბრძოლები ქართინგებით და იარაღებით ონლაინში.',
+        url: 'https://html5.gamedistribution.com/7918a59813d149f182c1bfb03e07dd3b/',
+        color: '#ff3300'
+      },
+      {
+        id: 'vextoria-io',
+        title: 'Vextoria .io',
+        cat: 'io',
+        desc: 'მრავალმომხმარებლიანი ტერიტორიების დაპყრობის თამაში.',
+        url: 'https://html5.gamedistribution.com/c6c221e7d4b445cb97d8199b50e68d06/',
+        color: '#3399ff'
+      },
+      {
+        id: 'stickman-hook',
+        title: 'Stickman Hook',
+        cat: 'action',
+        desc: 'გადახტი დაბრკოლებებზე თოკის გამოყენებით.',
+        url: 'https://html5.gamedistribution.com/f04c6be678f24a0d970e70335805dddf/',
+        color: '#ff00aa'
+      },
+      {
+        id: 'basketball-stars',
+        title: 'Basketball Stars',
+        cat: 'arcade',
+        desc: 'ითამაშე კალათბურთი 1v1 რეჟიმში ტურნირებზე.',
+        url: 'https://html5.gamedistribution.com/6958570d81004b4d8d17f1a30f782637/',
+        color: '#ff8800'
+      },
+      {
+        id: 'cyber-cars',
+        title: 'Cyber Cars Racing',
+        cat: 'racing',
+        desc: 'ფუტურიტული რბოლები ნეონურ ქალაქში.',
+        url: 'https://html5.gamedistribution.com/2b3dfb7b13a34a36b33a0b3f545f448c/',
+        color: '#00ffff'
+      }
+    ];
+
+    let activeCategory = 'all';
+
+    function getGameIconSVG(color) {
+      return `
+        <svg viewBox="0 0 24 24" fill="${color}">
+          <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H9v2H8v-2H6v-1h2V10h1v2h2v1zm4.5 1c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+        </svg>
+      `;
+    }
+
+    function renderGames(list) {
+      const grid = document.getElementById('gamesGrid');
+      grid.innerHTML = '';
+
+      if (list.length === 0) {
+        grid.innerHTML = '<div class="no-results">თამაში ვერ მოიძებნა 🔍</div>';
+        return;
+      }
+
+      list.forEach(g => {
+        grid.innerHTML += `
+          <div class="card" onclick="openGame('${g.url}', '${g.title}')">
+            <div class="card-thumb">
+              ${getGameIconSVG(g.color)}
+              <span class="badge">${g.cat}</span>
+            </div>
+            <div class="card-info">
+              <div class="card-title">${g.title}</div>
+              <div class="card-desc">${g.desc}</div>
+              <div class="play-link">
+                <span>ითამაშე ახლავე</span>
+                <span>➔</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function filterGames() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filtered = games.filter(g => {
+        const matchesCategory = activeCategory === 'all' || g.cat === activeCategory;
+        const matchesSearch = g.title.toLowerCase().includes(query) || g.desc.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
+      });
+      renderGames(filtered);
+    }
+
+    function filterCat(category, element) {
+      document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+      activeCategory = category;
+      filterGames();
+    }
+
+    function openGame(url, title) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('gameFrame').src = url;
+      document.getElementById('gameModal').classList.add('active');
+    }
+
+    function closeGame() {
+      document.getElementById('gameModal').classList.remove('active');
+      document.getElementById('gameFrame').src = '';
+    }
+
+    function reloadGame() {
+      const frame = document.getElementById('gameFrame');
+      const currentSrc = frame.src;
+      frame.src = '';
+      setTimeout(() => { frame.src = currentSrc; }, 100);
+    }
+
+    // თავდაპირველი რენდერი
+    renderGames(games);
+  </script>
+</body>
+</html>
